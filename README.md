@@ -37,3 +37,40 @@ pub fn main() !void {
 ```
 
 For more examples, see the [_examples](_examples) directory. You can build all the examples using the `zig build examples` command.
+
+## Using zig-gpio in your project
+
+If you don't have a zig project already, you can create one by running `zig init-exe` in a new folder.
+
+To add `zig-gpio` as a dependency, there are two steps:
+
+1. Add `zig-gpio` to your `build.zig.zon` file
+2. Add `zig-gpio` to your `build.zig` file
+
+If you don't have a `build.zig.zon` file, create one. If you do, just add `zig-gpio` as a dependency. Here's what it should look like:
+
+```zig
+.{
+    .name = "my_project",
+    .version = "0.0.1",
+
+    .dependencies = .{
+        .gpio = .{
+            .url = "https://gitea.elara.ws/Elara6331/zig-gpio/archive/v0.0.1.tar.gz",
+            .hash = "1220e3af3194d1154217423d60124ae3a46537c2253dbfb8057e9b550526d2885df1",
+        }
+    }
+}
+```
+
+Then, in your `build.zig` file, add the following before `b.installArtifact(exe)`:
+
+```zig
+const gpio = b.dependency("gpio", .{
+    .target = target,
+    .optimize = optimize,
+});
+exe.addModule("gpio", gpio.module("gpio"));
+```
+
+And that's it! You should now be able to use `zig-gpio` via `@import("gpio");`
