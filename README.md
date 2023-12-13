@@ -4,7 +4,9 @@
 
 This library can be used to access GPIO on devices such as [Raspberry Pis](https://www.raspberrypi.com/) or the [Milk-V Duo](https://milkv.io/duo) (which is the board I created it for and tested it with).
 
-This is my first public Zig project, so I'm open to any suggestions!
+This is my first Zig project, so I'm open to any suggestions!
+
+_There's a companion article available on my website: https://www.elara.ws/articles/milkv-duo._
 
 ## Compatibility
 
