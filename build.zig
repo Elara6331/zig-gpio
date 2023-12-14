@@ -7,8 +7,8 @@ const Item = struct {
 
 /// List of examples
 const examples = [_]Item{
-    .{ .name = "blinky", .src = "src/_examples/blinky.zig" },
-    .{ .name = "multi", .src = "src/_examples/multi.zig" },
+    .{ .name = "blinky", .src = "src/examples/blinky.zig" },
+    .{ .name = "multi", .src = "src/examples/multi.zig" },
 };
 
 /// List of commands
