@@ -13,8 +13,21 @@ pub fn main() !void {
     _ = args.skip(); // Skip the program name
 
     // Iterate over each argument
-    while (args.next()) |arg| {
-        const fl = try dir.openFileZ(arg, .{});
+    while (args.next()) |argument| {
+        const hasGpiochip = hasPrefix(argument, "gpiochip");
+
+        // If the argument has the "gpiochip" prefix,
+        // just use it unchanged. Otherwise, add the prefix.
+        var filename: []const u8 = if (hasGpiochip)
+            argument
+        else
+            try std.mem.concat(alloc, u8, &.{ "gpiochip", argument });
+
+        // We only need to free if we actually allocated,
+        // which only happens if there was no prefix.
+        defer if (!hasGpiochip) alloc.free(filename);
+
+        const fl = try dir.openFile(filename, .{});
         var chip = try gpio.getChipByFd(fl.handle);
         defer chip.close(); // This will close the fd
 
@@ -51,4 +64,9 @@ pub fn main() !void {
             try stdout.print("    line {d}: {s} {s} [{s}]\n", .{ offset, name, consumer, flagStr });
         }
     }
+}
+
+fn hasPrefix(s: []const u8, prefix: []const u8) bool {
+    if (s.len < prefix.len) return false;
+    return (std.mem.eql(u8, s[0..prefix.len], prefix));
 }
