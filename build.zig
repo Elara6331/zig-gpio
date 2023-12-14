@@ -7,14 +7,14 @@ const Item = struct {
 
 /// List of examples
 const examples = [_]Item{
-    .{ .name = "blinky", .src = "_examples/blinky.zig" },
-    .{ .name = "multi", .src = "_examples/multi.zig" },
+    .{ .name = "blinky", .src = "src/_examples/blinky.zig" },
+    .{ .name = "multi", .src = "src/_examples/multi.zig" },
 };
 
 /// List of commands
 const commands = [_]Item{
-    .{ .name = "gpiodetect", .src = "cmd/detect.zig" },
-    .{ .name = "gpioinfo", .src = "cmd/info.zig" },
+    .{ .name = "gpiodetect", .src = "src/cmd/detect.zig" },
+    .{ .name = "gpioinfo", .src = "src/cmd/info.zig" },
 };
 
 pub fn build(b: *std.Build) !void {
@@ -22,7 +22,7 @@ pub fn build(b: *std.Build) !void {
     const optimize = b.standardOptimizeOption(.{});
 
     // Add the gpio module so it can be used by the package manager
-    var gpio_module = b.createModule(.{ .source_file = .{ .path = "index.zig" } });
+    var gpio_module = b.createModule(.{ .source_file = .{ .path = "src/index.zig" } });
     try b.modules.put(b.dupe("gpio"), gpio_module);
 
     // Create a step to build all the examples
