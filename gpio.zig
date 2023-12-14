@@ -40,6 +40,16 @@ pub const Chip = struct {
     lines: u32,
     closed: bool = false,
 
+    /// Returns the chip's name as a slice without any null characters
+    pub fn nameSlice(self: *Chip) []const u8 {
+        return std.mem.sliceTo(&self.name, 0);
+    }
+
+    /// Returns the chip's label as a slice without any null characters
+    pub fn labelSlice(self: *Chip) []const u8 {
+        return std.mem.sliceTo(&self.label, 0);
+    }
+
     /// Sets the chip's consumer value to `consumer`.
     pub fn setConsumer(self: *Chip, consumer: []const u8) !void {
         if (consumer.len > gpio.uapi.MAX_NAME_SIZE) return error.ConsumerTooLong;

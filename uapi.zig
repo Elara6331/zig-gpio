@@ -38,6 +38,16 @@ pub const LineInfo = extern struct {
     attrs: [MAX_LINE_NUM_ATTRS]LineAttribute,
     /// Reserved for future use
     _padding: [4]u32,
+
+    /// Returns the line's name as a slice without any null characters
+    pub fn nameSlice(self: *const LineInfo) []const u8 {
+        return std.mem.sliceTo(&self.name, 0);
+    }
+
+    /// Returns the line's consumer as a slice without any null characters
+    pub fn consumerSlice(self: *const LineInfo) []const u8 {
+        return std.mem.sliceTo(&self.consumer, 0);
+    }
 };
 
 /// LineAttribute ID values
@@ -171,6 +181,7 @@ fn handleErrno(ret: usize) !void {
         .INVAL => error.InvalidArgument,
         .BADF => error.BadFileDescriptor,
         .NOTTY => error.InappropriateIOCTLForDevice,
+        .IO => error.IOError,
         .FAULT => unreachable,
         else => |err| return std.os.unexpectedErrno(err),
     };

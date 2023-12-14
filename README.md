@@ -10,9 +10,11 @@ _There's a companion article available on my website: https://www.elara.ws/artic
 
 ## Compatibility
 
-**zig-gpio** uses the v2 character device API, which means it will work on any Linux system running kernel 5.10 or above. All you need to do is find out which `gpiochip` device controls which pin and what the offsets are, which you can do by either finding documentation online, or using the `gpiodetect` and `gpioinfo` tools from `libgpiod`.
+**zig-gpio** uses the v2 character device API, which means it will work on any Linux system running kernel 5.10 or above. All you need to do is find out which `gpiochip` device controls which pin and what the offsets are, which you can do by either finding documentation online, or using the `gpiodetect` and `gpioinfo` tools from this repo or from `libgpiod`.
 
-I plan to eventually write a Zig replacement for `gpiodetect` and `gpioinfo`. 
+## Commands
+
+**zig-gpio** provides replacements for some of the `libgpiod` tools, such as `gpiodetect` and `gpioinfo`. You can build all of them using `zig build commands` or specific ones using `zig build <command>` (for example: `zig build gpiodetect`).
 
 ## Try it yourself!
 
