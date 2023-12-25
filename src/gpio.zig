@@ -209,13 +209,44 @@ pub const Lines = struct {
         try gpio.uapi.setLineConfig(self.handle, lc);
     }
 
+    /// Sets the values of the lines at the given indices.
+    ///
+    /// Note that this function takes indices and not offsets.
+    /// The indices correspond to the index of the offset in your request.
+    /// For example, if you requested `&.{22, 20, 23}`,
+    /// `22` will correspond to `0`, `20` will correspond to `1`,
+    /// and `23` will correspond to `2`.
+    pub fn setValues(self: Lines, indices: []const u32, vals: gpio.uapi.LineValueBitset) !void {
+        if (self.closed) return error.LineClosed;
+        var lv = gpio.uapi.LineValues{ .bits = vals };
+        for (indices) |index| {
+            if (index >= self.num_lines) return error.IndexOutOfRange;
+            lv.mask.set(index);
+        }
+        return try gpio.uapi.setLineValues(self.handle, lv);
+    }
+
+    /// Sets the values of all the controlled lines
+    pub fn setAllValues(self: Lines, vals: gpio.uapi.LineValueBitset) !void {
+        if (self.closed) return error.LineClosed;
+        var lv = gpio.uapi.LineValues{ .bits = vals };
+
+        // Add all the indices to the bitset of values to set
+        var i: u32 = 0;
+        while (i < self.num_lines) : (i += 1) lv.mask.set(i);
+
+        return try gpio.uapi.setLineValues(self.handle, lv);
+    }
+
     /// Gets the values of all the controlled lines as a bitset
     pub fn getValues(self: Lines) !gpio.uapi.LineValueBitset {
         if (self.closed) return error.LineClosed;
         var vals = gpio.uapi.LineValueBitset{ .mask = 0 };
+
+        // Add all the indices to the bitset of values to get
         var i: u32 = 0;
-        // Add all the indices to the list of values to get
         while (i < self.num_lines) : (i += 1) vals.set(i);
+
         return try gpio.uapi.getLineValues(self.handle, vals);
     }
 
@@ -240,6 +271,13 @@ pub const Line = struct {
     /// Sets the line as low (off).
     pub fn setLow(self: Line) !void {
         try self.lines.setLow(&.{0});
+    }
+
+    // Sets the value of the line.
+    pub fn setValue(self: Line, value: bool) !void {
+        var vals = gpio.uapi.LineValueBitset{ .mask = 0 };
+        vals.setValue(0, value);
+        try self.lines.setValues(&.{0}, vals);
     }
 
     /// Sets the configuration flags of the line.
