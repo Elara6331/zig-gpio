@@ -32,7 +32,7 @@ pub fn main() !void {
     // Iterate over each argument starting from the second one
     for (args[2..args.len]) |argument| {
         // Parse each argument as an integer and add it to offsets
-        var offset = try std.fmt.parseInt(u32, argument, 10);
+        var offset = try std.fmt.parseUnsigned(u32, argument, 10);
         try offsets.append(offset);
     }
 
