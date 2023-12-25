@@ -209,11 +209,14 @@ pub const Lines = struct {
         try gpio.uapi.setLineConfig(self.handle, lc);
     }
 
-    /// Returns the values of all the controlled lines as a bitset.
+    /// Gets the values of all the controlled lines as a bitset
     pub fn getValues(self: Lines) !gpio.uapi.LineValueBitset {
         if (self.closed) return error.LineClosed;
-        const vals = try gpio.uapi.getLineValues(self.handle);
-        return vals.bits;
+        var vals = gpio.uapi.LineValueBitset{ .mask = 0 };
+        var i: u32 = 0;
+        // Add all the indices to the list of values to get
+        while (i < self.num_lines) : (i += 1) vals.set(i);
+        return try gpio.uapi.getLineValues(self.handle, vals);
     }
 
     /// Releases all the resources held by the requested `lines`.

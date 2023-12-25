@@ -15,6 +15,7 @@ const examples = [_]Item{
 const commands = [_]Item{
     .{ .name = "gpiodetect", .src = "src/cmd/detect.zig" },
     .{ .name = "gpioinfo", .src = "src/cmd/info.zig" },
+    .{ .name = "gpioget", .src = "src/cmd/get.zig" },
 };
 
 pub fn build(b: *std.Build) !void {

@@ -231,13 +231,13 @@ pub fn getLine(fd: std.os.fd_t, lr: LineRequest) !std.os.fd_t {
     return lrp.fd;
 }
 
-/// Executes `GPIO_V2_LINE_GET_VALUES_IOCTL` on the given fd and returns the resulting
-/// `LineValues` value
-pub fn getLineValues(fd: std.os.fd_t) !LineValues {
+/// Executes `GPIO_V2_LINE_GET_VALUES_IOCTL` on the given fd with the given mask,
+/// and returns a bitset representing all the line values.
+pub fn getLineValues(fd: std.os.fd_t, mask: LineValueBitset) !LineValueBitset {
+    var vals = LineValues{ .mask = mask };
     const req = std.os.linux.IOCTL.IOWR(0xB4, 0x0E, LineValues);
-    var values = std.mem.zeroes(LineValues);
-    try handleErrno(std.os.linux.ioctl(fd, req, @intFromPtr(&values)));
-    return values;
+    try handleErrno(std.os.linux.ioctl(fd, req, @intFromPtr(&vals)));
+    return vals.bits;
 }
 
 /// Executes `GPIO_V2_LINE_SET_VALUES_IOCTL` on the given fd
