@@ -3,19 +3,19 @@ const gpio = @import("index.zig");
 
 /// Opens the file at path and uses the file descriptor to get the gpiochip.
 pub fn getChip(path: []const u8) !Chip {
-    var fl = try std.fs.openFileAbsolute(path, .{});
+    const fl = try std.fs.openFileAbsolute(path, .{});
     return try getChipByFd(fl.handle);
 }
 
 /// Same as `getChip` but the `path` parameter is null-terminated.
 pub fn getChipZ(path: [*:0]const u8) !Chip {
-    var fl = try std.fs.openFileAbsoluteZ(path, .{});
+    const fl = try std.fs.openFileAbsoluteZ(path, .{});
     return try getChipByFd(fl.handle);
 }
 
 /// Returns a `chip` with the given file descriptor.
-pub fn getChipByFd(fd: std.os.fd_t) !Chip {
-    var info = try gpio.uapi.getChipInfo(fd);
+pub fn getChipByFd(fd: std.posix.fd_t) !Chip {
+    const info = try gpio.uapi.getChipInfo(fd);
     return Chip{
         .name = info.name,
         .label = info.label,
@@ -35,7 +35,7 @@ pub const Chip = struct {
     /// If it isn't set, "zig-gpio" will be used instead.
     consumer: ?[gpio.uapi.MAX_NAME_SIZE]u8 = null,
     /// The file descriptor of the `gpiochip` device.
-    handle: std.os.fd_t,
+    handle: std.posix.fd_t,
     // The amount of lines available under this device.
     lines: u32,
     closed: bool = false,
@@ -71,7 +71,7 @@ pub const Chip = struct {
 
     /// Requests and returns a single line at the given `offset`, from the given `chip`.
     pub fn requestLine(self: Chip, offset: u32, flags: gpio.uapi.LineFlags) !Line {
-        var l = try self.requestLines(&.{offset}, flags);
+        const l = try self.requestLines(&.{offset}, flags);
         return Line{ .lines = l };
     }
 
@@ -108,14 +108,14 @@ pub const Chip = struct {
     pub fn close(self: *Chip) void {
         if (self.closed) return;
         self.closed = true;
-        std.os.close(self.handle);
+        std.posix.close(self.handle);
     }
 };
 
 /// Represents a collection of lines requested from a `chip`.
 pub const Lines = struct {
     /// The file descriptor of the lines.
-    handle: std.os.fd_t,
+    handle: std.posix.fd_t,
     /// The amount of lines being controlled.
     num_lines: u32,
     /// The offsets of the lines being controlled.
@@ -254,7 +254,7 @@ pub const Lines = struct {
     pub fn close(self: *Lines) void {
         if (self.closed) return;
         self.closed = true;
-        std.os.close(self.handle);
+        std.posix.close(self.handle);
     }
 };
 

@@ -16,7 +16,7 @@ pub fn main() !void {
         return error.InsufficientArguments;
     }
 
-    var path: []const u8 = if (hasPrefix(args[1], "gpiochip"))
+    const path: []const u8 = if (hasPrefix(args[1], "gpiochip"))
         try std.mem.concat(alloc, u8, &.{ "/dev/", args[1] })
     else
         try std.mem.concat(alloc, u8, &.{ "/dev/gpiochip", args[1] });
@@ -32,7 +32,7 @@ pub fn main() !void {
     // Iterate over each argument starting from the second one
     for (args[2..args.len]) |argument| {
         // Parse each argument as an integer and add it to offsets
-        var offset = try std.fmt.parseUnsigned(u32, argument, 10);
+        const offset = try std.fmt.parseUnsigned(u32, argument, 10);
         try offsets.append(offset);
     }
 

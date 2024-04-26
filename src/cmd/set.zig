@@ -16,7 +16,7 @@ pub fn main() !void {
         return error.InsufficientArguments;
     }
 
-    var path: []const u8 = if (hasPrefix(args[1], "gpiochip"))
+    const path: []const u8 = if (hasPrefix(args[1], "gpiochip"))
         try std.mem.concat(alloc, u8, &.{ "/dev/", args[1] })
     else
         try std.mem.concat(alloc, u8, &.{ "/dev/gpiochip", args[1] });
@@ -34,8 +34,8 @@ pub fn main() !void {
         // Get the index of the equals sign in the argument
         const eqIndex = std.mem.indexOf(u8, argument, "=") orelse return error.InvalidArgument;
         // Parse each argument's offset and value, and add it to the values map
-        var offset = try std.fmt.parseUnsigned(u32, argument[0..eqIndex], 10);
-        var value = try std.fmt.parseUnsigned(u1, argument[eqIndex + 1 .. argument.len], 10);
+        const offset = try std.fmt.parseUnsigned(u32, argument[0..eqIndex], 10);
+        const value = try std.fmt.parseUnsigned(u1, argument[eqIndex + 1 .. argument.len], 10);
         try values.put(offset, value != 0);
     }
 
