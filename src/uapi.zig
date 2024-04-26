@@ -176,20 +176,20 @@ pub const LineInfoChanged = extern struct {
 /// Returns an error based on the given return code
 fn handleErrno(ret: usize) !void {
     if (ret == 0) return;
-    return switch (std.os.errno(ret)) {
+    return switch (std.posix.errno(ret)) {
         .BUSY => error.DeviceIsBusy,
         .INVAL => error.InvalidArgument,
         .BADF => error.BadFileDescriptor,
         .NOTTY => error.InappropriateIOCTLForDevice,
         .IO => error.IOError,
         .FAULT => unreachable,
-        else => |err| return std.os.unexpectedErrno(err),
+        else => |err| return std.posix.unexpectedErrno(err),
     };
 }
 
 /// Executes `GPIO_GET_CHIPINFO_IOCTL` on the given fd and returns the resulting
 /// `ChipInfo` value
-pub fn getChipInfo(fd: std.os.fd_t) !ChipInfo {
+pub fn getChipInfo(fd: std.posix.fd_t) !ChipInfo {
     const req = std.os.linux.IOCTL.IOR(0xB4, 0x01, ChipInfo);
     var info = std.mem.zeroes(ChipInfo);
     try handleErrno(std.os.linux.ioctl(fd, req, @intFromPtr(&info)));
@@ -198,7 +198,7 @@ pub fn getChipInfo(fd: std.os.fd_t) !ChipInfo {
 
 /// Executes `GPIO_V2_GET_LINEINFO_IOCTL` on the given fd and returns the resulting
 /// `LineInfo` value
-pub fn getLineInfo(fd: std.os.fd_t, offset: u32) !LineInfo {
+pub fn getLineInfo(fd: std.posix.fd_t, offset: u32) !LineInfo {
     const req = std.os.linux.IOCTL.IOWR(0xB4, 0x05, LineInfo);
     var info = std.mem.zeroes(LineInfo);
     info.offset = offset;
@@ -208,7 +208,7 @@ pub fn getLineInfo(fd: std.os.fd_t, offset: u32) !LineInfo {
 
 /// Executes `GPIO_V2_GET_LINEINFO_WATCH_IOCTL` on the given fd and returns the resulting
 /// `LineInfo` value
-pub fn watchLineInfo(fd: std.os.fd_t, offset: u32) !LineInfo {
+pub fn watchLineInfo(fd: std.posix.fd_t, offset: u32) !LineInfo {
     const req = std.os.linux.IOCTL.IOWR(0xB4, 0x06, LineInfo);
     var info = std.mem.zeroes(LineInfo);
     info.offset = offset;
@@ -217,14 +217,14 @@ pub fn watchLineInfo(fd: std.os.fd_t, offset: u32) !LineInfo {
 }
 
 /// Executes `GPIO_GET_LINEINFO_UNWATCH_IOCTL` on the given fd
-pub fn unwatchLineInfo(fd: std.os.fd_t, offset: u32) !void {
+pub fn unwatchLineInfo(fd: std.posix.fd_t, offset: u32) !void {
     const req = std.os.linux.IOCTL.IOWR(0xB4, 0x0C, u32);
     try handleErrno(std.os.linux.ioctl(fd, req, @intFromPtr(&offset)));
 }
 
 /// Executes `GPIO_V2_GET_LINE_IOCTL` on the given fd and returns the resulting
 /// line descriptor
-pub fn getLine(fd: std.os.fd_t, lr: LineRequest) !std.os.fd_t {
+pub fn getLine(fd: std.posix.fd_t, lr: LineRequest) !std.posix.fd_t {
     const lrp = &lr;
     const req = std.os.linux.IOCTL.IOWR(0xB4, 0x07, LineRequest);
     try handleErrno(std.os.linux.ioctl(fd, req, @intFromPtr(lrp)));
@@ -233,7 +233,7 @@ pub fn getLine(fd: std.os.fd_t, lr: LineRequest) !std.os.fd_t {
 
 /// Executes `GPIO_V2_LINE_GET_VALUES_IOCTL` on the given fd with the given mask,
 /// and returns a bitset representing all the line values.
-pub fn getLineValues(fd: std.os.fd_t, mask: LineValueBitset) !LineValueBitset {
+pub fn getLineValues(fd: std.posix.fd_t, mask: LineValueBitset) !LineValueBitset {
     var vals = LineValues{ .mask = mask };
     const req = std.os.linux.IOCTL.IOWR(0xB4, 0x0E, LineValues);
     try handleErrno(std.os.linux.ioctl(fd, req, @intFromPtr(&vals)));
@@ -241,13 +241,13 @@ pub fn getLineValues(fd: std.os.fd_t, mask: LineValueBitset) !LineValueBitset {
 }
 
 /// Executes `GPIO_V2_LINE_SET_VALUES_IOCTL` on the given fd
-pub fn setLineValues(fd: std.os.fd_t, lv: LineValues) !void {
+pub fn setLineValues(fd: std.posix.fd_t, lv: LineValues) !void {
     const req = std.os.linux.IOCTL.IOWR(0xB4, 0x0F, LineValues);
     try handleErrno(std.os.linux.ioctl(fd, req, @intFromPtr(&lv)));
 }
 
 /// Executes `GPIO_V2_LINE_SET_CONFIG_IOCTL` on the given fd
-pub fn setLineConfig(fd: std.os.fd_t, lc: LineConfig) !void {
+pub fn setLineConfig(fd: std.posix.fd_t, lc: LineConfig) !void {
     const req = std.os.linux.IOCTL.IOWR(0xB4, 0x0D, LineConfig);
     try handleErrno(std.os.linux.ioctl(fd, req, @intFromPtr(&lc)));
 }

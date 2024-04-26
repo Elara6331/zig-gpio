@@ -18,7 +18,7 @@ pub fn main() !void {
 
         // If the argument has the "gpiochip" prefix,
         // just use it unchanged. Otherwise, add the prefix.
-        var filename: []const u8 = if (hasGpiochip)
+        const filename: []const u8 = if (hasGpiochip)
             argument
         else
             try std.mem.concat(alloc, u8, &.{ "gpiochip", argument });

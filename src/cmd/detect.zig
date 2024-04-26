@@ -2,7 +2,7 @@ const std = @import("std");
 const gpio = @import("gpio");
 
 pub fn main() !void {
-    var iter_dir = try std.fs.openIterableDirAbsolute("/dev", .{});
+    var iter_dir = try std.fs.openDirAbsolute("/dev", .{ .iterate = true });
     defer iter_dir.close();
 
     const stdout = std.io.getStdOut().writer();
@@ -11,7 +11,7 @@ pub fn main() !void {
     while (try iter.next()) |entry| {
         if (!hasPrefix(entry.name, "gpiochip")) continue;
 
-        const fl = try iter_dir.dir.openFile(entry.name, .{});
+        const fl = try iter_dir.openFile(entry.name, .{});
         var chip = try gpio.getChipByFd(fl.handle);
         defer chip.close(); // This will close the fd
 
