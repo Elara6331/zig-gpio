@@ -60,7 +60,7 @@ If you don't have a `build.zig.zon` file, create one. If you do, just add `zig-g
 
     .dependencies = .{
         .gpio = .{
-            .url = "https://gitea.elara.ws/Elara6331/zig-gpio/archive/v0.0.1.tar.gz",
+            .url = "https://gitea.elara.ws/Elara6331/zig-gpio/archive/v0.0.2.tar.gz",
             .hash = "1220e3af3194d1154217423d60124ae3a46537c2253dbfb8057e9b550526d2885df1",
         }
     }
