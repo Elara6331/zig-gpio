@@ -74,7 +74,7 @@ const gpio = b.dependency("gpio", .{
     .target = target,
     .optimize = optimize,
 });
-exe.addModule("gpio", gpio.module("gpio"));
+exe.root_module.addImport("gpio", gpio.module("gpio"));
 ```
 
 And that's it! You should now be able to use `zig-gpio` via `@import("gpio");`

@@ -7,8 +7,8 @@ const Item = struct {
 
 /// List of examples
 const examples = [_]Item{
-    .{ .name = "blinky", .src = "src/examples/blinky.zig" },
-    .{ .name = "multi", .src = "src/examples/multi.zig" },
+    .{ .name = "blinky", .src = "examples/blinky.zig" },
+    .{ .name = "multi", .src = "examples/multi.zig" },
 };
 
 /// List of commands
@@ -24,7 +24,7 @@ pub fn build(b: *std.Build) !void {
     const optimize = b.standardOptimizeOption(.{});
 
     // Add the gpio module so it can be used by the package manager
-    const gpio_module = b.createModule(.{ .root_source_file = .{ .path = "src/index.zig" } });
+    const gpio_module = b.createModule(.{ .root_source_file = b.path("src/index.zig") });
     try b.modules.put(b.dupe("gpio"), gpio_module);
 
     // Create a step to build all the examples
@@ -37,7 +37,7 @@ pub fn build(b: *std.Build) !void {
 
         const exe = b.addExecutable(.{
             .name = cfg.name,
-            .root_source_file = .{ .path = cfg.src },
+            .root_source_file = b.path(cfg.src),
             .target = target,
             .optimize = optimize,
         });
@@ -58,7 +58,7 @@ pub fn build(b: *std.Build) !void {
 
         const exe = b.addExecutable(.{
             .name = cfg.name,
-            .root_source_file = .{ .path = cfg.src },
+            .root_source_file = b.path(cfg.src),
             .target = target,
             .optimize = optimize,
         });
