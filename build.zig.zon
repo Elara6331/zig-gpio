@@ -1,5 +1,5 @@
 .{
-    .name = "zig-gpio",
+    .name = .ziggpio,
     .version = "0.0.1",
     .paths = .{""},
 }
